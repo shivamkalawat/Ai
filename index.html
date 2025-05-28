@@ -110,7 +110,6 @@
   <input id="userInput" placeholder="Type a message..." />
   <button onclick="sendMessage()">Send</button>
 </div>
-  <button onclick="sendMessage()">Send</button>
 <script>
   function sendMessage() {
     const userInput = document.getElementById("userInput");
@@ -120,7 +119,7 @@
     const chatbox = document.getElementById("chat");
     chatbox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
 
-    fetch("https://aichat1-do0s.onrender.com", {
+    fetch("https://aichat1-do0s.onrender.com/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: message })
