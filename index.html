@@ -104,6 +104,32 @@
   </style>
 </head>
 <body>
+  <script>
+  function sendMessage() {
+    const userInput = document.getElementById("userInput");
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    const chatbox = document.getElementById("chatbox");
+    chatbox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+
+    fetch("https://aichat1-do0s.onrender.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: message })
+    })
+    .then(res => res.json())
+    .then(data => {
+      chatbox.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
+      userInput.value = "";
+      chatbox.scrollTop = chatbox.scrollHeight;
+    })
+    .catch(err => {
+      chatbox.innerHTML += `<p style="color:red;"><strong>Error:</strong> Failed to connect to server.</p>`;
+      console.error(err);
+    });
+  }
+  </script>
   <h2>Neuro</h2>
   <div id="chat"></div>
 <div id="inputSection">
