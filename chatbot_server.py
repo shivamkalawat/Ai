@@ -8,6 +8,9 @@ CORS(app)
 
 TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
 TOGETHER_MODEL = "meta-llama/Llama-3-8b-chat-hf"
+@app.route("/")
+def home():
+    return "Backend is running"
 
 @app.route("/")
 def index():
