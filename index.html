@@ -104,7 +104,14 @@
   </style>
 </head>
 <body>
-  <script>
+  <h2>Neuro</h2>
+  <div id="chat"></div>
+<div id="inputSection">
+  <input id="userInput" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+  <button onclick="sendMessage()">Send</button>
+<script>
   function sendMessage() {
     const userInput = document.getElementById("userInput");
     const message = userInput.value.trim();
@@ -129,40 +136,6 @@
       console.error(err);
     });
   }
-  </script>
-  <h2>Neuro</h2>
-  <div id="chat"></div>
-<div id="inputSection">
-  <input id="userInput" placeholder="Type a message..." />
-  <button onclick="sendMessage()">Send</button>
-</div>
-  <button onclick="sendMessage()">Send</button>
-
-  <script>
-    async function sendMessage() {
-      const input = document.getElementById("userInput");
-      const message = input.value.trim();
-      if (!message) return;
-
-      const chat = document.getElementById("chat");
-      chat.innerHTML += `<div class="msg user"> ${message}</div>`;
-      input.value = "";
-
-      const res = await fetch("http://localhost:5000/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
-      });
-
-      const data = await res.json();
-      if (data.reply) {
-        chat.innerHTML += `<div class="msg bot"> ${data.reply}</div>`;
-      } else {
-        chat.innerHTML += `<div class="msg bot"><b>Error:</b> ${data.error}</div>`;
-      }
-
-      chat.scrollTop = chat.scrollHeight;
-    }
-  </script>
+</script>
 </body>
 </html>
