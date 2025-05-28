@@ -1,43 +1,36 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import requests
 
-app = Flask(__name__)
-CORS(app)  # allow cross-origin requests (for frontend)
+app = Flask(__name__, static_folder="frontend", static_url_path="")
+CORS(app)
 
-API_KEY = "your_together_api_key_here"
-API_URL = "https://api.together.xyz/v1/chat/completions"
+# Serve index.html at root
+@app.route("/")
+def serve_index():
+    return send_from_directory(app.static_folder, "index.html")
 
-chat_history = [
-    {"role": "system", "content": "You are a helpful assistant."}
-]
-
+# Your Together API chat route
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
-    user_message = data.get("message")
-    
-    chat_history.append({"role": "user", "content": user_message})
-    
-    payload = {
-        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        "messages": chat_history,
-        "temperature": 0.7,
-        "max_tokens": 256
-    }
+    user_message = data.get("message", "")
 
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
+    response = requests.post(
+        "https://api.together.xyz/v1/chat/completions",
+        headers={
+            "Authorization": f"7fa95995b057444430ffdc95993b6c04be59554cea7ae059db0a81b6c09a49f7",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": "meta-llama/Llama-3-8b-chat-hf",
+            "messages": [{"role": "user", "content": user_message}]
+        }
+    )
 
     try:
-        response = requests.post(API_URL, headers=headers, json=payload)
         reply = response.json()["choices"][0]["message"]["content"]
-        chat_history.append({"role": "assistant", "content": reply})
-        return jsonify({"reply": reply})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except:
+        reply = "Sorry, something went wrong."
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    return jsonify({"reply": reply})
