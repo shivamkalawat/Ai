@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Chatbot</title>
+  <style>
+    <style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h2 {
+    margin-top: 30px;
+    color: #1a5fc1;
+  }
+
+  #chat {
+    background: white;
+    border: 1px solid #ccc;
+    width: 90%;
+    max-width: 600px;
+    height: 500px;
+    margin-top: 20px;
+    padding: 15px;
+    overflow-y: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .msg {
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+
+  .user {
+    background-color: #d4eaf7;
+    align-self: flex-end;
+    text-align: right;
+    margin-left: auto;
+  }
+
+  .bot {
+    background-color: #e8f6e5;
+    align-self: flex-start;
+    text-align: left;
+    margin-right: auto;
+  }
+
+  #inputSection {
+    display: flex;
+    justify-content: center;
+    width: 90%;
+    max-width: 600px;
+    margin: 15px 0;
+  }
+
+  #userInput {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px 0 0 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    outline: none;
+  }
+
+  button {
+    padding: 12px 20px;
+    background-color: #2c7be5;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #1a5fc1;
+  }
+
+  @media (max-width: 600px) {
+    #chat {
+      height: 400px;
+    }
+
+    #userInput {
+      font-size: 14px;
+    }
+
+    button {
+      font-size: 14px;
+    }
+  }
+</style>
+  </style>
+</head>
+<body>
+  <h2>Neuro</h2>
+  <div id="chat"></div>
+<div id="inputSection">
+  <input id="userInput" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chat = document.getElementById("chat");
+      chat.innerHTML += `<div class="msg user"> ${message}</div>`;
+      input.value = "";
+
+      const res = await fetch("http://localhost:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      if (data.reply) {
+        chat.innerHTML += `<div class="msg bot"> ${data.reply}</div>`;
+      } else {
+        chat.innerHTML += `<div class="msg bot"><b>Error:</b> ${data.error}</div>`;
+      }
+
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
