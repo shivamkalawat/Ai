@@ -111,30 +111,31 @@
   <button onclick="sendMessage()">Send</button>
 </div>
 <script>
-  function sendMessage() {
-    const userInput = document.getElementById("userInput");
-    const message = userInput.value.trim();
-    if (!message) return;
+function sendMessage() {
+  const userInput = document.getElementById("userInput");
+  const message = userInput.value.trim();
+  if (!message) return;
 
-    const chatbox = document.getElementById("chat");
-    chatbox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+  const chatbox = document.getElementById("chat");
+  chatbox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
 
-    fetch("https://aichat1-do0s.onrender.com/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: message })
-    })
-    .then(res => res.json())
-    .then(data => {
-      chatbox.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
-      userInput.value = "";
-      chatbox.scrollTop = chatbox.scrollHeight;
-    })
-    .catch(err => {
-      chatbox.innerHTML += `<p style="color:red;"><strong>Error:</strong> Failed to connect to server.</p>`;
-      console.error(err);
-    });
-  }
+  fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("Response:", data);  // Debug log
+    chatbox.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
+    userInput.value = "";
+    chatbox.scrollTop = chatbox.scrollHeight;
+  })
+  .catch(err => {
+    console.error(err);
+    chatbox.innerHTML += `<p style="color:red;"><strong>Error:</strong> Could not connect.</p>`;
+  });
+}
 </script>
 </body>
 </html>
